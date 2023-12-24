@@ -1,0 +1,32 @@
+name: CI/CD Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Angular App
+      run: ng build --configuration=production
+
+    - name: Publish Artifact
+      if: success()
+      uses: actions/upload-artifact@v2
+      with:
+        name: published-app
+        path: dist/FrontendProject
