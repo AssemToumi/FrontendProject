@@ -19,7 +19,7 @@ jobs:
         node-version: '18'
 
     - name: Install Dependencies
-      run: npm install
+      run: npm install -g @angular/cli@latest
 
     - name: Build Angular App
       run: ng build --configuration=production
