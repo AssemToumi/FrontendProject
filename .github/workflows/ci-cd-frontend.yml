@@ -6,27 +6,41 @@ on:
       - main
 
 jobs:
-  build:
+  ubuntu-build:
+
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
       with:
-        node-version: '14'
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run build
+    - run: npm test
+      env:
+        CI: true
+  windows-build:
 
-    - name: Install Dependencies
-      run: npm install
+    runs-on: windows-latest
 
-    - name: Build Angular App
-      run: ng build --configuration=production
+    strategy:
+      matrix:
+        node-version: [12.x]
 
-    - name: Publish Artifact
-      if: success()
-      uses: actions/upload-artifact@v2
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
       with:
-        name: published-app
-        path: dist/FrontendProject
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run build
+    - run: npm test
+      env:
+        CI: true
