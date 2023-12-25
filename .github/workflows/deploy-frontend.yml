@@ -46,22 +46,27 @@ jobs:
           # Netlify deployment for Dev
           if [ "$ENVIRONMENT" == "dev" ]; then
             echo "Deploying to $ENVIRONMENT environment"
-            netlify login -i
-            netlify deploy --prod
+            netlify login
+            netlify deploy
           fi
 
           # Netlify deployment for Staging
           if [ "$ENVIRONMENT" == "staging" ]; then
             echo "Deploying to Staging environment"
-            netlify login -i
-            netlify deploy --prod
+            netlify login
+            netlify deploy
             # Additional staging deployment steps can be added here
           fi
 
           # Netlify deployment for Prod
           if [ "$ENVIRONMENT" == "prod" ]; then
             echo "Deploying to Prod environment"
-            netlify login -i
-            netlify deploy --prod
+            netlify login
+            netlify deploy
             # Additional prod deployment steps can be added here
           fi
+
+sso:
+  entityID: https://api.netlify.com/saml/my-team
+  loginURL: https://api.netlify.com/saml/my-team/init
+  acsURL: https://api.netlify.com/saml/my-team/acs
