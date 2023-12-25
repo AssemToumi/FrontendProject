@@ -14,19 +14,12 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Setup Node.js
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm ci
-      - run: npm test
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
 
     - name: Install Dependencies
-      run: |
-        npm install
-        npm install -g @angular/cli
-
-    - name: Update Angular CLI
-      run: ng update @angular/cli
+      run: npm install
 
     - name: Build Angular App
       run: ng build --configuration=production
