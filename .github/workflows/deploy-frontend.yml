@@ -10,21 +10,57 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      # Set the environment variable to 'dev', 'staging', or 'prod' based on your needs
+      ENVIRONMENT: dev
+
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Deploy to Dev
-      if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend'
-      run: |
-        # Logic to deploy to dev environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
 
-    - name: Deploy to Staging
-      if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend'
-      run: |
-        # Logic to deploy to staging environment
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Deploy to Prod
-      if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend'
-      run: |
-        # Logic to deploy to production environment
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Build Angular app
+        run: npm run build 
+
+      - name: Deploy to Netlify
+        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend'
+        env:
+          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_SITE_NAME }}
+          NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          # Install Netlify CLI
+          npm install -g netlify-cli
+
+          # Netlify deployment for Dev
+          if [ "$ENVIRONMENT" == "dev" ]; then
+            echo "Deploying to $ENVIRONMENT environment"
+            netlify login -i
+            netlify deploy --prod
+          fi
+
+          # Netlify deployment for Staging
+          if [ "$ENVIRONMENT" == "staging" ]; then
+            echo "Deploying to Staging environment"
+            netlify login -i
+            netlify deploy --prod
+            # Additional staging deployment steps can be added here
+          fi
+
+          # Netlify deployment for Prod
+          if [ "$ENVIRONMENT" == "prod" ]; then
+            echo "Deploying to Prod environment"
+            netlify login -i
+            netlify deploy --prod
+            # Additional prod deployment steps can be added here
+          fi
