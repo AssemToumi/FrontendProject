@@ -65,8 +65,3 @@ jobs:
             netlify deploy
             # Additional prod deployment steps can be added here
           fi
-
-sso:
-  entityID: https://api.netlify.com/saml/my-team
-  loginURL: https://api.netlify.com/saml/my-team/init
-  acsURL: https://api.netlify.com/saml/my-team/acs
