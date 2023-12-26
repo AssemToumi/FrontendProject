@@ -5,6 +5,9 @@ on:
     workflows: ["CI/CD Frontend"]
     types:
       - completed
+    branches:
+      - main
+      - develop
 
 jobs:
   deploy:
@@ -14,8 +17,7 @@ jobs:
           matrix:
             node-version: [18.x]
 
-    env:
-      # Set the environment variable to 'dev', 'staging', or 'prod' based on your needs
+        env:
       ENVIRONMENT: dev
 
     steps:
@@ -34,7 +36,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Netlify
-        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend'
+        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend' && github.event_name == 'push'
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
@@ -48,21 +50,17 @@ jobs:
           if [ "$ENVIRONMENT" == "dev" ]; then
             echo "Deploying to $ENVIRONMENT environment"
             netlify login --auth $NETLIFY_AUTH_TOKEN
-            netlify deploy
+            netlify deploy -e dev
           fi
 
-          # Netlify deployment for Staging
+          # Manual deployment for Staging
           if [ "$ENVIRONMENT" == "staging" ]; then
-            echo "Deploying to Staging environment"
-            netlify login --auth $NETLIFY_AUTH_TOKEN
-            netlify deploy
-            # Additional staging deployment steps can be added here
+            echo "Manual deployment to Staging environment. Run the following command locally:"
+            echo "netlify login --auth $NETLIFY_AUTH_TOKEN && netlify deploy -e staging"
           fi
 
-          # Netlify deployment for Prod
+          # Manual deployment for Prod
           if [ "$ENVIRONMENT" == "prod" ]; then
-            echo "Deploying to Prod environment"
-            netlify login --auth $NETLIFY_AUTH_TOKEN
-            netlify deploy
-            # Additional prod deployment steps can be added here
+            echo "Manual deployment to Prod environment. Run the following command locally:"
+            echo "netlify login --auth $NETLIFY_AUTH_TOKEN && netlify deploy -e prod"
           fi
