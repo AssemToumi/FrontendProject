@@ -33,7 +33,8 @@ jobs:
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v2
@@ -42,7 +43,6 @@ jobs:
           path: dist/FrontendProject
             
       - name: Deploy to Dev
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_DEV_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
@@ -56,6 +56,7 @@ jobs:
   deploy-staging:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/tags/staging'
 
     steps:
       - name: Download Artifact
@@ -65,7 +66,6 @@ jobs:
           path: dist/FrontendProject
 
       - name: Deploy to Staging
-        if: github.event_name == 'push' && github.ref == 'refs/tags/staging'
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_STAGING_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
@@ -79,6 +79,7 @@ jobs:
   deploy-prod:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/tags/prod'
 
     steps:
       - name: Download Artifact
@@ -88,7 +89,6 @@ jobs:
           path: dist/FrontendProject
 
       - name: Deploy to Prod
-        if: github.event_name == 'push' && github.ref == 'refs/tags/prod'
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
