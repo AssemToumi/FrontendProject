@@ -6,7 +6,7 @@ on:
       - main
   release:
     types:
-      types: [created]
+      - created
 
 jobs:
   build:
