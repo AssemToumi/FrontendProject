@@ -1,66 +1,100 @@
-name: Deploy Frontend
+name: CI/CD Frontend
 
 on:
-  workflow_run:
-    workflows: ["CI/CD Frontend"]
-    types:
-      - completed
+  push:
     branches:
       - main
-      - develop
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
-    env:
-      ENVIRONMENT: dev
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: [18.x]
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Build
         run: npm run build
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
 
-      - name: Deploy to Netlify
-        if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.name == 'CI/CD Frontend' && github.event_name == 'push'
+  deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
+          
+      - name: Deploy to Dev
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
-          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_SITE_NAME }}
+          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_DEV_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_DEV_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         run: |
-          # Install Netlify CLI
           npm install -g netlify-cli
+          netlify login --auth $NETLIFY_AUTH_TOKEN
+          netlify deploy -e dev
 
-          # Netlify deployment for Dev
-          if [ "$ENVIRONMENT" == "dev" ]; then
-            echo "Deploying to $ENVIRONMENT environment"
-            netlify login --auth $NETLIFY_AUTH_TOKEN
-            netlify deploy -e dev
-          fi
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
 
-          # Manual deployment for Staging
-          if [ "$ENVIRONMENT" == "staging" ]; then
-            echo "Manual deployment to Staging environment. Run the following command locally:"
-            echo "netlify login --auth $NETLIFY_AUTH_TOKEN && netlify deploy -e staging"
-          fi
+    steps:
+      - name: Download Artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: build-artifact
+            path: dist/FrontendProject
 
-          # Manual deployment for Prod
-          if [ "$ENVIRONMENT" == "prod" ]; then
-            echo "Manual deployment to Prod environment. Run the following command locally:"
-            echo "netlify login --auth $NETLIFY_AUTH_TOKEN && netlify deploy -e prod"
-          fi
+      - name: Deploy to Staging
+        if: github.event_name == 'push' && github.ref == 'refs/tags/staging'
+        env:
+          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_STAGING_SITE_NAME }}
+          NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          npm install -g netlify-cli
+          netlify login --auth $NETLIFY_AUTH_TOKEN
+          netlify deploy -e staging
+
+  deploy-prod:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifact
+            uses: actions/download-artifact@v2
+            with:
+              name: build-artifact
+              path: dist/FrontendProject
+
+      - name: Deploy to Prod
+        if: github.event_name == 'push' && github.ref == 'refs/tags/prod'
+        env:
+          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
+          NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          npm install -g netlify-cli
+          netlify login --auth $NETLIFY_AUTH_TOKEN
+          netlify deploy -e prod
