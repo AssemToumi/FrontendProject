@@ -51,7 +51,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy -e dev
+          netlify deploy
 
   deploy-staging:
     needs: build
@@ -74,7 +74,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy -e staging
+          netlify deploy
 
   deploy-prod:
     needs: build
@@ -97,4 +97,4 @@ jobs:
         run: |
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy -e prod
+          netlify deploy
