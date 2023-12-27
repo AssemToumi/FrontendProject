@@ -1,2 +1,2 @@
 # FrontendProject
-Angular Backend Project
+Angular Frontend Project
