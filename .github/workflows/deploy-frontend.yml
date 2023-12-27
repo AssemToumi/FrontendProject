@@ -16,7 +16,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: [18.x]
+          node-version: '18.x'
 
       - name: Install Dependencies
         run: npm install
@@ -40,7 +40,7 @@ jobs:
         with:
           name: build-artifact
           path: dist/FrontendProject
-          
+            
       - name: Deploy to Dev
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -59,10 +59,10 @@ jobs:
 
     steps:
       - name: Download Artifact
-          uses: actions/download-artifact@v2
-          with:
-            name: build-artifact
-            path: dist/FrontendProject
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
 
       - name: Deploy to Staging
         if: github.event_name == 'push' && github.ref == 'refs/tags/staging'
@@ -82,10 +82,10 @@ jobs:
 
     steps:
       - name: Download Artifact
-            uses: actions/download-artifact@v2
-            with:
-              name: build-artifact
-              path: dist/FrontendProject
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
 
       - name: Deploy to Prod
         if: github.event_name == 'push' && github.ref == 'refs/tags/prod'
