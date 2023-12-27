@@ -1,5 +1,5 @@
 {
-  "name": "your-frontend-project-name",
+  "name": "FrontendProject",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:YourFrontendProjectName": "node dist/your-frontend-project-name/server/server.mjs"
+    "serve:ssr:YourFrontendProjectName": "node dist/FrontendProject/server/server.mjs"
   },
   "private": true,
   "dependencies": {
