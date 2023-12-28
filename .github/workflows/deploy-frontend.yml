@@ -47,9 +47,10 @@ jobs:
         
 
   deploy-dev:
-    needs: sonarqube-analysis
+    needs: build
     runs-on: ubuntu-latest
     environment : DEV
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
       - name: Download Artifact
