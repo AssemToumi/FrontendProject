@@ -1,6 +1,7 @@
 name: CI/CD Frontend
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -35,6 +36,7 @@ jobs:
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
+    environment : DEV
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' 
     
     steps:
@@ -56,9 +58,9 @@ jobs:
           netlify deploy
 
   deploy-staging:
-    needs: build
+    needs: DEV
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/tags/staging' || github.ref == 'refs/heads/staging'
+    environment : STAGING
 
     steps:
       - name: Download Artifact
@@ -79,9 +81,9 @@ jobs:
           netlify deploy
 
   deploy-prod:
-    needs: build
+    needs: STAGING
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/tags/prod' || github.ref == 'refs/heads/prod'
+    environment : PROD
 
     steps:
       - name: Download Artifact
