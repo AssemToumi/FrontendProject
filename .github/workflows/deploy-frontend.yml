@@ -30,12 +30,9 @@ jobs:
         with:
           name: build-artifact
           path: dist/FrontendProject
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-artifact
-          path: dist/FrontendProject
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/FrontendProject
 
   deploy-dev:
     needs: build
@@ -44,6 +41,12 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
+
       - name: Deploy to Dev
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_DEV_SITE_NAME }}
@@ -61,6 +64,12 @@ jobs:
     environment: STAGING
 
     steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
+
       - name: Deploy to Staging
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_STAGING_SITE_NAME }}
@@ -78,6 +87,12 @@ jobs:
     environment: PROD
 
     steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
+      
       - name: Deploy to Prod
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
