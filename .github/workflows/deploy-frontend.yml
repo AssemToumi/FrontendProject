@@ -2,11 +2,6 @@ name: CI/CD Frontend
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    tags:
-      - '*'
   pull_request:
     types: [opened, synchronize, reopened] 
 
@@ -61,7 +56,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-dev-artifact
+          name: build-artifact
           path: dist/FrontendProject
             
       - name: Deploy to Dev
@@ -84,7 +79,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-staging-artifact
+          name: build-artifact
           path: dist/FrontendProject
 
       - name: Deploy to Staging
@@ -107,7 +102,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-prod-artifact
+          name: build-artifact
           path: dist/FrontendProject
 
       - name: Deploy to Prod
