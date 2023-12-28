@@ -40,6 +40,7 @@ jobs:
           path: dist/FrontendProject
 
   deploy-dev:
+    needs: build
     runs-on: ubuntu-latest
     environment: DEV
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
