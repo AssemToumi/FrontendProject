@@ -31,6 +31,12 @@ jobs:
           name: build-artifact
           path: dist/FrontendProject
 
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: dist/FrontendProject
+
   sonarqube-analysis:
     runs-on: ubuntu-latest
     needs: build
