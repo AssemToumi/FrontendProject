@@ -25,15 +25,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-artifact
-          path: dist/FrontendProject
-      
-      - name: Verify Build Artifacts
-        run: ls -l dist/FrontendProject
-
   deploy-dev:
     needs: build
     runs-on: ubuntu-latest
@@ -41,11 +32,20 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
-      - name: Download Artifact
+      - name: Upload Dev Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dev-artifact
+          path: dist/dev/FrontendProject
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/dev/FrontendProject
+
+      - name: Download Dev Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-artifact
-          path: dist/FrontendProject
+          name: dev-artifact
+          path: dist/dev/FrontendProject
 
       - name: Deploy to Dev
         env:
@@ -59,16 +59,25 @@ jobs:
           netlify deploy
 
   deploy-staging:
-    needs: deploy-dev
+    needs: build
     runs-on: ubuntu-latest
     environment: STAGING
 
     steps:
-      - name: Download Artifact
+      - name: Upload Staging Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: staging-artifact
+          path: dist/staging/FrontendProject
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/staging/FrontendProject
+
+      - name: Download Staging Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-artifact
-          path: dist/FrontendProject
+          name: staging-artifact
+          path: dist/staging/FrontendProject
 
       - name: Deploy to Staging
         env:
@@ -82,18 +91,27 @@ jobs:
           netlify deploy
 
   deploy-prod:
-    needs: deploy-staging
+    needs: build
     runs-on: ubuntu-latest
     environment: PROD
 
     steps:
-      - name: Download Artifact
+      - name: Upload Prod Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: prod-artifact
+          path: dist/prod/FrontendProject
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/prod/FrontendProject
+
+      - name: Download Prod Artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-artifact
-          path: dist/FrontendProject
+          name: prod-artifact
+          path: dist/prod/FrontendProject
       
-      - name: Deploy to Prod
+      - name: Deploy to Prod/FrontendProject
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
           NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
