@@ -36,16 +36,16 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dev-artifact
-          path: dist/dev/FrontendProject
+          path: dist/FrontendProject/dev
       
       - name: Verify Build Artifacts
-        run: ls -l dist/dev/FrontendProject
+        run: ls -l dist/FrontendProject/dev
 
       - name: Download Dev Artifact
         uses: actions/download-artifact@v2
         with:
           name: dev-artifact
-          path: dist/dev/FrontendProject
+          path: dist/FrontendProject/dev
 
       - name: Deploy to Dev
         env:
@@ -68,16 +68,16 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: staging-artifact
-          path: dist/staging/FrontendProject
+          path: dist/FrontendProject/staging
       
       - name: Verify Build Artifacts
-        run: ls -l dist/staging/FrontendProject
+        run: ls -l dist/FrontendProject/staging
 
       - name: Download Staging Artifact
         uses: actions/download-artifact@v2
         with:
           name: staging-artifact
-          path: dist/staging/FrontendProject
+          path: dist/FrontendProject/staging
 
       - name: Deploy to Staging
         env:
@@ -100,16 +100,16 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: prod-artifact
-          path: dist/prod/FrontendProject
+          path: dist/FrontendProject/prod
       
       - name: Verify Build Artifacts
-        run: ls -l dist/prod/FrontendProject
+        run: ls -l dist/FrontendProject/prod
 
       - name: Download Prod Artifact
         uses: actions/download-artifact@v2
         with:
           name: prod-artifact
-          path: dist/prod/FrontendProject
+          path: dist/FrontendProject/prod
       
       - name: Deploy to Prod/FrontendProject
         env:
