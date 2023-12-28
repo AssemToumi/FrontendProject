@@ -58,7 +58,7 @@ jobs:
           netlify deploy
 
   deploy-staging:
-    needs: DEV
+    needs: deploy-dev
     runs-on: ubuntu-latest
     environment : STAGING
 
@@ -81,7 +81,7 @@ jobs:
           netlify deploy
 
   deploy-prod:
-    needs: STAGING
+    needs: deploy-staging
     runs-on: ubuntu-latest
     environment : PROD
 
