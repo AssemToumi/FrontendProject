@@ -15,19 +15,17 @@ jobs:
         with:
           fetch-depth: 0
         
-      - name: create-description
-        run: "some script for creating PR description from the branch diff"
-        id: description
-      - name: pull-request
-        uses: repo-sync/pull-request@v2
+      - uses: octue/generate-pull-request-description@main
+        id: pull-request-description
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          pr_title: Release
-      - name: update-pull-request
-        uses: kt3k/update-pr-description@v2
+          pull_request_url: ${{ github.event.pull_request.url }}
+          api_token: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: Update pull request body
+        uses: riskledger/update-pr-description@v2
         with:
-          pr_body: ${{ steps.description.outputs.description }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          body: ${{ steps.pull-request-description.outputs.pull_request_description }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Use Node.js
         uses: actions/setup-node@v3
