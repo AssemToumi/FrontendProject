@@ -7,9 +7,11 @@ on:
 
 jobs:
 
-  build:
+  deploy-dev:
     runs-on: ubuntu-latest
-
+    environment: DEV
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -22,16 +24,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build
-        run: npm run build
+      - name: Build for Development
+        run: npm run build -- --configuration=development
 
-  deploy-dev:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: DEV
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
       - name: Upload Dev Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -59,11 +54,24 @@ jobs:
           netlify deploy
 
   deploy-staging:
-    needs: build
     runs-on: ubuntu-latest
     environment: STAGING
-
+    needs: deploy-dev
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build for Staging
+        run: npm run build -- --configuration=staging
+
       - name: Upload Staging Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -91,11 +99,24 @@ jobs:
           netlify deploy
 
   deploy-prod:
-    needs: build
     runs-on: ubuntu-latest
     environment: PROD
-
+    needs: deploy-staging
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build for Production
+        run: npm run build -- --configuration=production
+
       - name: Upload Prod Artifact
         uses: actions/upload-artifact@v2
         with:
