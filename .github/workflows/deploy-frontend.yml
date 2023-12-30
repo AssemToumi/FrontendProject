@@ -62,7 +62,10 @@ jobs:
         
       - name: Create Staging Branch if Not Exist
         run: git checkout -b staging || true
-  
+
+      - name: Fetch and Pull Changes
+        run: git pull -X theirs origin main:staging
+
       - name: Push Code to Staging Branch
         run: git push origin staging
 
@@ -91,9 +94,6 @@ jobs:
         with:
           name: staging-artifact
           path: dist/FrontendProject/staging 
-      
-      - name: Checkout Main Branch
-        run: git checkout main
 
       - name: Deploy to Staging
         env:
@@ -116,6 +116,9 @@ jobs:
 
       - name: Create Prod Branch if Not Exist
         run: git checkout -b prod || true
+
+      - name: Fetch and Pull Changes
+        run: git pull -X theirs origin main:prod
 
       - name: Push Code to Prod Branch
         run: git push origin prod
