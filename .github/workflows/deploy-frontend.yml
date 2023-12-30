@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: DEV
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -25,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Build for Development
-        run: npm run build -- --configuration=development
+        run: npm run build --configuration=development
 
       - name: Upload Dev Artifact
         uses: actions/upload-artifact@v2
@@ -58,6 +57,18 @@ jobs:
     environment: STAGING
     needs: deploy-dev
     steps:
+      - name: Create Staging Branch if Not Exist
+        run: git show-ref --verify --quiet refs/heads/staging || git branch staging && git push origin staging
+
+      - name: Checkout Staging Branch
+        run: git checkout -b staging
+
+      - name: Push Code to Staging Branch
+        run: git push origin staging
+
+      - name: Checkout Main Branch
+        run: git checkout main
+
       - name: Checkout Repository
         uses: actions/checkout@v2
         
@@ -70,7 +81,7 @@ jobs:
         run: npm install
 
       - name: Build for Staging
-        run: npm run build -- --configuration=staging
+        run: npm run build --configuration=staging
 
       - name: Upload Staging Artifact
         uses: actions/upload-artifact@v2
@@ -85,8 +96,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: staging-artifact
-          path: dist/FrontendProject/staging
-
+          path: dist/FrontendProject/staging 
+      
       - name: Deploy to Staging
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_STAGING_SITE_NAME }}
@@ -103,6 +114,18 @@ jobs:
     environment: PROD
     needs: deploy-staging
     steps:
+      - name: Create Prod Branch if Not Exist
+        run: git show-ref --verify --quiet refs/heads/prod || git branch prod && git push origin prod
+
+      - name: Checkout Prod Branch
+        run: git checkout -b prod
+
+      - name: Push Code to Prod Branch
+        run: git push origin prod
+
+      - name: Checkout Main Branch
+        run: git checkout main
+
       - name: Checkout Repository
         uses: actions/checkout@v2
         
@@ -115,7 +138,7 @@ jobs:
         run: npm install
 
       - name: Build for Production
-        run: npm run build -- --configuration=production
+        run: npm run build --configuration=production
 
       - name: Upload Prod Artifact
         uses: actions/upload-artifact@v2
@@ -131,14 +154,14 @@ jobs:
         with:
           name: prod-artifact
           path: dist/FrontendProject/prod
-      
+
       - name: Deploy to Prod/FrontendProject
-        env:
-          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
-          NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: |
-          npm install -g netlify-cli
-          netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy --dir=dist/FrontendProject/prod
+      env:
+        NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
+        NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      run: |
+        npm install -g netlify-cli
+        netlify login --auth $NETLIFY_AUTH_TOKEN
+        netlify deploy --dir=dist/FrontendProject/prod
