@@ -59,12 +59,17 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-        
-      - name: Create Staging Branch if Not Exist
-        run: git checkout -b staging || true
 
-      - name: Fetch and Pull Changes
-        run: git pull -X theirs origin main:staging
+      - name: Create Staging Branch if Not Exist
+        run: |
+          git branch -r | grep origin/staging || git checkout -b staging origin/main
+          git checkout staging
+
+      - name: Fetch Changes from Main
+        run: git fetch origin main
+
+      - name: Merge Changes from Main to Staging
+        run: git merge -X theirs origin/main
 
       - name: Push Code to Staging Branch
         run: git push origin staging
@@ -115,10 +120,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create Prod Branch if Not Exist
-        run: git checkout -b prod || true
+        run: |
+          git branch -r | grep origin/prod || git checkout -b prod origin/main
+          git checkout prod
 
-      - name: Fetch and Pull Changes
-        run: git pull -X theirs origin main:prod
+      - name: Fetch Changes from Main
+        run: git fetch origin main
+
+      - name: Merge Changes from Main to Prod
+        run: git merge -X theirs origin/main
 
       - name: Push Code to Prod Branch
         run: git push origin prod
