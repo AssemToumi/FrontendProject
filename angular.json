@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/FrontendProject/prod",
+            "outputPath": "dist/FrontendProject/dev",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -28,6 +28,27 @@
             }
           },
           "configurations": {
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "outputPath": "dist/FrontendProject/dev",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            },
+            "staging": {
+              "outputPath": "dist/FrontendProject/staging",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
+            },
             "production": {
               "budgets": [
                 {
@@ -49,41 +70,20 @@
               ],
               "outputPath": "dist/FrontendProject/prod",
               "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "outputPath": "dist/FrontendProject/dev",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
-            },
-            "staging": {
-              "outputPath": "dist/FrontendProject/staging",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.staging.ts"
-                }
-              ]
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "FrontendProject:build:production"
-            },
             "development": {
               "buildTarget": "FrontendProject:build:development"
             },
             "staging": {
               "buildTarget": "FrontendProject:build:staging"
+            },
+            "production": {
+              "buildTarget": "FrontendProject:build:production"
             }
           },
           "defaultConfiguration": "development"
