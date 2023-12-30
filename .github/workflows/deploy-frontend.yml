@@ -83,21 +83,6 @@ jobs:
       - name: Build for Staging
         run: npm run build --configuration=staging
 
-      - name: Upload Staging Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: staging-artifact
-          path: dist/FrontendProject/staging
-      
-      - name: Verify Build Artifacts
-        run: ls -l dist/FrontendProject/staging
-
-      - name: Download Staging Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: staging-artifact
-          path: dist/FrontendProject/staging 
-
       - name: Deploy to Staging
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_STAGING_SITE_NAME }}
@@ -139,24 +124,6 @@ jobs:
 
       - name: Build for Production
         run: npm run build --configuration=production
-
-      - name: Upload Prod Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: prod-artifact
-          path: dist/FrontendProject/prod
-      
-      - name: Verify Build Artifacts
-        run: ls -l dist/FrontendProject/prod
-
-      - name: Download Prod Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: prod-artifact
-          path: dist/FrontendProject/prod
-      
-      - name: Checkout Main Branch
-        run: git checkout main
 
       - name: Deploy to Prod/FrontendProject
         env:
