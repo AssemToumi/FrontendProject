@@ -91,9 +91,6 @@ jobs:
         with:
           name: staging-artifact
           path: dist/FrontendProject/staging 
-      
-      - name: Checkout Main Branch
-        run: git checkout main
 
       - name: Deploy to Staging
         env:
@@ -145,9 +142,6 @@ jobs:
         with:
           name: prod-artifact
           path: dist/FrontendProject/prod
-      
-      - name: Checkout Main Branch
-        run: git checkout main
 
       - name: Deploy to Prod/FrontendProject
         env:
