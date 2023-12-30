@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: DEV
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -24,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Build for Development
-        run: npm run build --configuration=development
+        run: npm run build -- --configuration=development
 
       - name: Upload Dev Artifact
         uses: actions/upload-artifact@v2
@@ -40,6 +41,18 @@ jobs:
         with:
           name: dev-artifact
           path: dist/FrontendProject/dev
+      
+      - name: Delete Local Staging Branch if Exists
+        run: |
+          git branch -D staging || true
+      
+      - name: Delete Remote Staging Branch if Exists
+        run: |
+          git push origin --delete staging || true
+  
+      - name: Create Staging Branch from Main
+        run: |
+          git checkout -b staging origin/main
 
       - name: Deploy to Dev
         env:
@@ -50,7 +63,7 @@ jobs:
         run: | 
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy --dir=dist/FrontendProject/dev
+          netlify deploy
 
   deploy-staging:
     runs-on: ubuntu-latest
@@ -59,7 +72,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      
+        
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
@@ -69,19 +82,22 @@ jobs:
         run: npm install
 
       - name: Build for Staging
-        run: npm run build --configuration=staging
+        run: npm run build -- --configuration=staging
 
-      - name: Delete Local Staging Branch if Exists
-        run: |
-          git branch -D staging || true
-  
-      - name: Delete Remote Staging Branch if Exists
-        run: |
-          git push origin --delete staging || true
-  
-      - name: Create Staging Branch from Main
-        run: |
-          git checkout -b staging origin/main
+      - name: Upload Staging Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: staging-artifact
+          path: dist/FrontendProject/staging
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/FrontendProject/staging
+
+      - name: Download Staging Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: staging-artifact
+          path: dist/FrontendProject/staging
 
       - name: Deploy to Staging
         env:
@@ -92,7 +108,7 @@ jobs:
         run: |
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy --dir=dist/FrontendProject/staging
+          netlify deploy
 
   deploy-prod:
     runs-on: ubuntu-latest
@@ -101,7 +117,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
+        
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
@@ -111,12 +127,27 @@ jobs:
         run: npm install
 
       - name: Build for Production
-        run: npm run build --configuration=production
+        run: npm run build -- --configuration=production
 
+      - name: Upload Prod Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: prod-artifact
+          path: dist/FrontendProject/prod
+      
+      - name: Verify Build Artifacts
+        run: ls -l dist/FrontendProject/prod
+
+      - name: Download Prod Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: prod-artifact
+          path: dist/FrontendProject/prod
+      
       - name: Delete Local prod Branch if Exists
         run: |
           git branch -D prod || true
-  
+    
       - name: Delete Remote prod Branch if Exists
         run: |
           git push origin --delete prod || true
@@ -124,7 +155,7 @@ jobs:
       - name: Create prod Branch from Main
         run: |
           git checkout -b prod origin/main
-
+    
       - name: Deploy to Prod/FrontendProject
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
@@ -134,4 +165,4 @@ jobs:
         run: |
           npm install -g netlify-cli
           netlify login --auth $NETLIFY_AUTH_TOKEN
-          netlify deploy --dir=dist/FrontendProject/prod
+          netlify deploy
