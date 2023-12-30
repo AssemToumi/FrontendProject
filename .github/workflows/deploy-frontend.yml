@@ -42,18 +42,6 @@ jobs:
           name: dev-artifact
           path: dist/FrontendProject/dev
       
-      - name: Delete Local Staging Branch if Exists
-        run: |
-          git branch -D staging || true
-      
-      - name: Delete Remote Staging Branch if Exists
-        run: |
-          git push origin --delete staging || true
-  
-      - name: Create Staging Branch from Main
-        run: |
-          git checkout -b staging origin/main
-
       - name: Deploy to Dev
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_DEV_SITE_NAME }}
@@ -144,18 +132,6 @@ jobs:
           name: prod-artifact
           path: dist/FrontendProject/prod
       
-      - name: Delete Local prod Branch if Exists
-        run: |
-          git branch -D prod || true
-    
-      - name: Delete Remote prod Branch if Exists
-        run: |
-          git push origin --delete prod || true
-  
-      - name: Create prod Branch from Main
-        run: |
-          git checkout -b prod origin/main
-    
       - name: Deploy to Prod/FrontendProject
         env:
           NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
