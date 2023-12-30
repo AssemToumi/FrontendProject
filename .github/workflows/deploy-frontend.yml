@@ -57,12 +57,12 @@ jobs:
     environment: STAGING
     needs: deploy-dev
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
       - name: Create Staging Branch if Not Exist
-        run: git show-ref --verify --quiet refs/heads/staging || git branch staging && git push origin staging
-
-      - name: Checkout Staging Branch
-        run: git checkout -b staging
-
+        run: git checkout -b staging || true
+  
       - name: Push Code to Staging Branch
         run: git push origin staging
 
@@ -115,10 +115,7 @@ jobs:
     needs: deploy-staging
     steps:
       - name: Create Prod Branch if Not Exist
-        run: git show-ref --verify --quiet refs/heads/prod || git branch prod && git push origin prod
-
-      - name: Checkout Prod Branch
-        run: git checkout -b prod
+        run: git checkout -b prod || true
 
       - name: Push Code to Prod Branch
         run: git push origin prod
