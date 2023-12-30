@@ -60,11 +60,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Create or Reset Staging Branch
+      - name: Delete Local Staging Branch if Exists
         run: |
-          git branch -D staging  # Delete the existing staging branch
-          git checkout -b staging origin/main  # Create a new staging branch from main
-          git checkout staging
+          git branch -D staging || true
+  
+      - name: Delete Remote Staging Branch if Exists
+        run: |
+          git push origin --delete staging || true
+  
+      - name: Create Staging Branch from Main
+        run: |
+          git checkout -b staging origin/main
 
       - name: Use Node.js
         uses: actions/setup-node@v1
@@ -111,11 +117,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Create or Reset Prod Branch
+      - name: Delete Local prod Branch if Exists
         run: |
-          git branch -D prod  # Delete the existing prod branch
-          git checkout -b prod origin/main  # Create a new prod branch from main
-          git checkout prod
+          git branch -D prod || true
+  
+      - name: Delete Remote prod Branch if Exists
+        run: |
+          git push origin --delete prod || true
+  
+      - name: Create prod Branch from Main
+        run: |
+          git checkout -b prod origin/main
 
       - name: Use Node.js
         uses: actions/setup-node@v1
