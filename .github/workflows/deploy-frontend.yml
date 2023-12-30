@@ -156,12 +156,12 @@ jobs:
           path: dist/FrontendProject/prod
 
       - name: Deploy to Prod/FrontendProject
-      env:
-        NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
-        NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      run: |
-        npm install -g netlify-cli
-        netlify login --auth $NETLIFY_AUTH_TOKEN
-        netlify deploy --dir=dist/FrontendProject/prod
+        env:
+          NETLIFY_SITE_NAME: ${{ secrets.NETLIFY_PROD_SITE_NAME }}
+          NETLIFY_OWNER: ${{ secrets.NETLIFY_OWNER }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          npm install -g netlify-cli
+          netlify login --auth $NETLIFY_AUTH_TOKEN
+          netlify deploy --dir=dist/FrontendProject/prod
