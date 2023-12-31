@@ -47,3 +47,16 @@ jobs:
       run: |
         npm version patch -m "Bump version to %s [skip ci]"
         git push --follow-tags
+
+    - name: Install GitHub CLI
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt update
+        sudo apt install gh
+
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v$(node -p "require('./package.json').version") -t "Release $(node -p "require('./package.json').version")" -n "Release $(node -p "require('./package.json').version")" dist/*
