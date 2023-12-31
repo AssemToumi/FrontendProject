@@ -6,7 +6,7 @@ on:
       - staging
 
 jobs:
-  build:
+  staging-deploy:
     runs-on: ubuntu-latest
     environment: STAGING
     
