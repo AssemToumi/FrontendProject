@@ -36,6 +36,11 @@ jobs:
         netlify login --auth $NETLIFY_AUTH_TOKEN
         netlify deploy --prod
 
+    - name: Configure Git
+      run: |
+        git config --global user.email "assamtomi@gmail.com"
+        git config --global user.name "AssemToumi"
+
     - name: Bump Version and Create Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
